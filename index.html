@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
-   /* ===== COMPLETE RESPONSIVE CSS ===== */
+  /* ===== COMPLETE CSS - RESPONSIVE TABLE (ROW WISE) ===== */
 * {
     margin: 0;
     padding: 0;
@@ -25,7 +25,22 @@ body {
     min-height: 100vh;
 }
 
-/* App Container */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: #1E2329;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+    background: #474D57;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #5E6673;
+}
+
 .app-container {
     max-width: 1600px;
     margin: 0 auto;
@@ -264,6 +279,7 @@ body {
 .crypto-table {
     width: 100%;
     border-collapse: collapse;
+    min-width: 700px;
 }
 
 .crypto-table th {
@@ -356,7 +372,8 @@ body {
     gap: 24px;
 }
 
-.watchlist-card, .chart-card {
+.watchlist-card,
+.chart-card {
     background: #1E2329;
     border-radius: 20px;
     border: 1px solid #2B3139;
@@ -457,7 +474,7 @@ canvas {
 }
 
 /* ============================================================ */
-/* ===== RESPONSIVE - SAME LAYOUT, JUST SCALE DOWN ===== */
+/* ===== RESPONSIVE: SAME TABLE, JUST SMALLER ===== */
 /* ============================================================ */
 
 /* ===== TABLETS & SMALL LAPTOPS ===== */
@@ -466,204 +483,161 @@ canvas {
         grid-template-columns: 1fr 300px;
         gap: 20px;
     }
-    
+
     .stats-grid {
         grid-template-columns: repeat(4, 1fr);
         gap: 12px;
     }
-    
+
     .stat-value {
         font-size: 22px;
     }
 }
 
-/* ===== MOBILE (PHONES) ===== */
+/* ===== MOBILE (PHONES) - TABLE REMAINS ROW WISE ===== */
 @media (max-width: 768px) {
     body {
         padding: 12px;
     }
-    
-    /* Header - Stack ho jaye */
+
+    /* Header */
     .header {
         flex-direction: column;
         align-items: stretch;
         gap: 12px;
     }
-    
+
     .logo-section {
         justify-content: center;
     }
-    
+
     .logo-text h1 {
         font-size: 20px;
     }
-    
+
     .header-actions {
         justify-content: center;
     }
-    
+
     .last-updated {
         font-size: 10px;
         padding: 6px 12px;
     }
-    
+
     .refresh-btn {
         padding: 8px 16px;
         font-size: 12px;
     }
-    
+
     /* Stats - 2 columns */
     .stats-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 10px;
     }
-    
+
     .stat-card {
         padding: 14px 16px;
     }
-    
+
     .stat-value {
         font-size: 20px;
     }
-    
+
     .stat-label {
         font-size: 11px;
     }
-    
-    /* Controls - Stack */
+
+    /* Controls */
     .controls-bar {
         flex-direction: column;
         align-items: stretch;
         gap: 12px;
     }
-    
+
     .search-wrapper {
         max-width: 100%;
     }
-    
+
     .filter-group {
         justify-content: center;
     }
-    
+
     .filter-btn {
         padding: 6px 14px;
         font-size: 12px;
     }
-    
+
     /* Main Grid - Single Column */
     .main-grid {
         grid-template-columns: 1fr;
         gap: 16px;
     }
-    
-    /* Table - Card View (Clean) */
-    .crypto-table thead {
-        display: none;
+
+    /* ===== TABLE - REMAINS ROW WISE (NO CARD VIEW) ===== */
+    .table-wrapper {
+        overflow-x: auto;
     }
-    
-    .crypto-table tbody tr {
-        display: block;
-        background: #1E2329;
-        border-radius: 12px;
-        margin-bottom: 12px;
-        padding: 14px;
-        border: 1px solid #2B3139;
+
+    .crypto-table {
+        min-width: 600px;
+        font-size: 12px;
     }
-    
-    .crypto-table tbody td {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 6px 0;
-        border-bottom: 1px solid #2B3139;
-        font-size: 13px;
+
+    .crypto-table th {
+        padding: 10px 12px;
+        font-size: 10px;
     }
-    
-    .crypto-table tbody td:last-child {
-        border-bottom: none;
+
+    .crypto-table td {
+        padding: 10px 12px;
+        font-size: 12px;
     }
-    
-    /* Labels for mobile */
-    .crypto-table tbody td:first-child {
-        border-bottom: none;
-        padding-bottom: 2px;
-    }
-    
-    .crypto-table tbody td:nth-child(2)::before {
-        content: "# ";
-        font-weight: 600;
-        color: #848E9C;
-    }
-    
-    .crypto-table tbody td:nth-child(3)::before {
-        content: "💰 ";
-        font-weight: 600;
-        color: #848E9C;
-    }
-    
-    .crypto-table tbody td:nth-child(4)::before {
-        content: "📊 ";
-        font-weight: 600;
-        color: #848E9C;
-    }
-    
-    .crypto-table tbody td:nth-child(5)::before {
-        content: "📈 ";
-        font-weight: 600;
-        color: #848E9C;
-    }
-    
-    .crypto-table tbody td:nth-child(6)::before {
-        content: "📉 ";
-        font-weight: 600;
-        color: #848E9C;
-    }
-    
-    .coin-cell {
-        gap: 10px;
-    }
-    
+
     .coin-icon {
-        width: 28px;
-        height: 28px;
+        width: 26px;
+        height: 26px;
         font-size: 10px;
     }
-    
+
     .coin-name {
-        font-size: 13px;
+        font-size: 12px;
     }
-    
+
     .coin-symbol {
-        font-size: 10px;
+        font-size: 9px;
     }
-    
+
+    .watchlist-star {
+        font-size: 14px;
+    }
+
     /* Right Panel */
     .right-panel {
         gap: 16px;
     }
-    
+
     .watchlist-items {
         max-height: 250px;
     }
-    
+
     .watchlist-item {
         padding: 12px 16px;
         font-size: 13px;
     }
-    
+
     .chart-container {
         height: 200px;
         padding: 12px;
     }
-    
+
     .card-header {
         padding: 12px 16px;
     }
-    
+
     .card-header h3 {
         font-size: 14px;
     }
-    
+
     .footer {
         font-size: 10px;
         padding: 16px;
@@ -675,43 +649,57 @@ canvas {
     body {
         padding: 8px;
     }
-    
+
     .stats-grid {
         grid-template-columns: 1fr 1fr;
         gap: 8px;
     }
-    
+
     .stat-card {
         padding: 10px 12px;
     }
-    
+
     .stat-value {
         font-size: 16px;
     }
-    
+
     .stat-label {
         font-size: 10px;
     }
-    
-    .crypto-table tbody td {
-        font-size: 11px;
-        padding: 4px 0;
+
+    .crypto-table {
+        min-width: 480px;
+        font-size: 10px;
     }
-    
-    .crypto-table tbody tr {
-        padding: 10px;
+
+    .crypto-table th {
+        padding: 8px 8px;
+        font-size: 9px;
     }
-    
+
+    .crypto-table td {
+        padding: 8px 8px;
+        font-size: 10px;
+    }
+
     .coin-icon {
-        width: 24px;
-        height: 24px;
+        width: 22px;
+        height: 22px;
         font-size: 8px;
     }
-    
+
     .coin-name {
-        font-size: 11px;
+        font-size: 10px;
     }
-    
+
+    .coin-symbol {
+        font-size: 8px;
+    }
+
+    .watchlist-star {
+        font-size: 12px;
+    }
+
     .filter-btn {
         padding: 4px 10px;
         font-size: 10px;
