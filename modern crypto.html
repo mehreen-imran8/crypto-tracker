@@ -1,0 +1,915 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>CryptoPulse Pro | Live Crypto Tracker</title>
+  <!-- Google Fonts + Chart.js CDN + Font Awesome 6 -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0B0E11;
+      color: #EAECEF;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    /* Modern scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #1E2329;
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #474D57;
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #5E6673;
+    }
+
+    /* App Container */
+    .app-container {
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    /* Header - Binance Style */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .logo-section {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #F0B90B, #FCD535);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: 800;
+      color: #0B0E11;
+    }
+
+    .logo-text h1 {
+      font-size: 24px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #F0B90B, #FCD535);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      letter-spacing: -0.3px;
+    }
+
+    .logo-text p {
+      font-size: 12px;
+      color: #848E9C;
+      margin-top: 2px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .refresh-btn {
+      background: #2B3139;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 32px;
+      color: #EAECEF;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .refresh-btn:hover {
+      background: #3E4550;
+      transform: translateY(-1px);
+    }
+
+    .last-updated {
+      font-size: 12px;
+      color: #848E9C;
+      background: #1E2329;
+      padding: 8px 16px;
+      border-radius: 32px;
+    }
+
+    /* Stats Grid - Modern Cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: #1E2329;
+      border-radius: 16px;
+      padding: 18px 20px;
+      transition: all 0.2s;
+      border: 1px solid #2B3139;
+    }
+
+    .stat-card:hover {
+      border-color: #F0B90B;
+      transform: translateY(-2px);
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: #848E9C;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .stat-value {
+      font-size: 26px;
+      font-weight: 700;
+      color: #F0B90B;
+    }
+
+    .stat-sub {
+      font-size: 12px;
+      color: #848E9C;
+      margin-top: 6px;
+    }
+
+    /* Controls Bar */
+    .controls-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .search-wrapper {
+      flex: 1;
+      max-width: 320px;
+      position: relative;
+    }
+
+    .search-wrapper i {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #848E9C;
+      font-size: 14px;
+    }
+
+    .search-input {
+      width: 100%;
+      background: #1E2329;
+      border: 1px solid #2B3139;
+      border-radius: 32px;
+      padding: 12px 16px 12px 44px;
+      color: #EAECEF;
+      font-size: 14px;
+      font-family: 'Inter', monospace;
+      transition: all 0.2s;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: #F0B90B;
+      background: #2B3139;
+    }
+
+    .filter-group {
+      display: flex;
+      gap: 8px;
+      background: #1E2329;
+      padding: 4px;
+      border-radius: 48px;
+      border: 1px solid #2B3139;
+    }
+
+    .filter-btn {
+      background: transparent;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 40px;
+      color: #848E9C;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filter-btn.active {
+      background: #F0B90B;
+      color: #0B0E11;
+    }
+
+    .filter-btn:hover:not(.active) {
+      background: #2B3139;
+      color: #EAECEF;
+    }
+
+    /* Main Content Grid */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 24px;
+    }
+
+    /* Table Container */
+    .table-wrapper {
+      background: #1E2329;
+      border-radius: 20px;
+      border: 1px solid #2B3139;
+      overflow: hidden;
+    }
+
+    .table-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #2B3139;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .table-header h3 {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .table-header span {
+      font-size: 12px;
+      color: #848E9C;
+    }
+
+    .crypto-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .crypto-table th {
+      text-align: left;
+      padding: 14px 16px;
+      background: #15191F;
+      color: #848E9C;
+      font-weight: 600;
+      font-size: 12px;
+      border-bottom: 1px solid #2B3139;
+    }
+
+    .crypto-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid #2B3139;
+      font-size: 14px;
+    }
+
+    .crypto-table tr {
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .crypto-table tr:hover {
+      background: #2B3139;
+    }
+
+    .coin-cell {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .coin-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #F0B90B, #FCD535);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 12px;
+      color: #0B0E11;
+    }
+
+    .coin-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .coin-name {
+      font-weight: 600;
+    }
+
+    .coin-symbol {
+      font-size: 11px;
+      color: #848E9C;
+    }
+
+    .price-positive {
+      color: #0ECB81;
+      font-weight: 600;
+    }
+
+    .price-negative {
+      color: #F6465D;
+      font-weight: 600;
+    }
+
+    .watchlist-star {
+      cursor: pointer;
+      font-size: 18px;
+      color: #848E9C;
+      transition: all 0.2s;
+    }
+
+    .watchlist-star.active {
+      color: #F0B90B;
+    }
+
+    .watchlist-star:hover {
+      transform: scale(1.1);
+    }
+
+    /* Right Panel */
+    .right-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .watchlist-card, .chart-card {
+      background: #1E2329;
+      border-radius: 20px;
+      border: 1px solid #2B3139;
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #2B3139;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-header i {
+      color: #F0B90B;
+      font-size: 18px;
+    }
+
+    .card-header h3 {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .watchlist-items {
+      max-height: 340px;
+      overflow-y: auto;
+    }
+
+    .watchlist-item {
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      border-bottom: 1px solid #2B3139;
+      transition: background 0.15s;
+    }
+
+    .watchlist-item:hover {
+      background: #2B3139;
+    }
+
+    .watchlist-item-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .watchlist-item-name {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .watchlist-item-symbol {
+      font-size: 11px;
+      color: #848E9C;
+    }
+
+    .watchlist-item-price {
+      text-align: right;
+    }
+
+    .watchlist-item-change {
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .empty-watchlist {
+      text-align: center;
+      padding: 48px 20px;
+      color: #848E9C;
+    }
+
+    .chart-container {
+      padding: 20px;
+      height: 280px;
+      position: relative;
+    }
+
+    canvas {
+      max-height: 240px;
+      width: 100%;
+    }
+
+    .loader-state {
+      text-align: center;
+      padding: 48px;
+      color: #848E9C;
+    }
+
+    .footer {
+      margin-top: 32px;
+      text-align: center;
+      font-size: 12px;
+      color: #5E6673;
+      padding: 20px;
+    }
+
+    @media (max-width: 1000px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+      body {
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="app-container">
+  <!-- Modern Header -->
+  <div class="header">
+    <div class="logo-section">
+      <div class="logo-icon">₿</div>
+      <div class="logo-text">
+        <h1>CryptoPulse Pro</h1>
+        <p>Live Market Data · Real-time Prices</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <div class="last-updated" id="updateTimestamp">
+        <i class="far fa-clock"></i> <span>Updating...</span>
+      </div>
+      <button class="refresh-btn" id="refreshBtn">
+        <i class="fas fa-sync-alt"></i> Refresh
+      </button>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label"><i class="fas fa-coins"></i> Total Cryptocurrencies</div>
+      <div class="stat-value" id="totalCoins">0</div>
+      <div class="stat-sub">Tracked coins</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label"><i class="fas fa-chart-line"></i> Global Market Cap</div>
+      <div class="stat-value" id="globalMCap">$0</div>
+      <div class="stat-sub">Total crypto valuation</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label"><i class="fas fa-chart-simple"></i> 24h Volume</div>
+      <div class="stat-value" id="globalVolume">$0</div>
+      <div class="stat-sub">Global trading volume</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label"><i class="fas fa-fire"></i> Top Gainer (24h)</div>
+      <div class="stat-value" id="topGainer">--</div>
+      <div class="stat-sub">Highest performer</div>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls-bar">
+    <div class="search-wrapper">
+      <i class="fas fa-search"></i>
+      <input type="text" id="searchInput" class="search-input" placeholder="Search by name or symbol...">
+    </div>
+    <div class="filter-group">
+      <button data-filter="all" class="filter-btn active">All Coins</button>
+      <button data-filter="gainers" class="filter-btn">📈 Gainers</button>
+      <button data-filter="losers" class="filter-btn">📉 Losers</button>
+    </div>
+  </div>
+
+  <!-- Main Grid -->
+  <div class="main-grid">
+    <!-- Left: Table -->
+    <div class="table-wrapper">
+      <div class="table-header">
+        <h3><i class="fas fa-list-ul"></i> Market Overview</h3>
+        <span><i class="fas fa-chart-simple"></i> Sorted by market cap</span>
+      </div>
+      <div style="overflow-x: auto;">
+        <table class="crypto-table" id="cryptoTable">
+          <thead>
+            <tr><th style="width: 40px">⭐</th><th>#</th><th>Coin</th><th>Price</th><th>24h Change</th><th>Market Cap</th><th>Volume (24h)</th></tr>
+          </thead>
+          <tbody id="tableBody">
+            <tr><td colspan="7" class="loader-state"><i class="fas fa-spinner fa-pulse"></i> Loading market data...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Right: Watchlist + Chart -->
+    <div class="right-panel">
+      <!-- Watchlist Card -->
+      <div class="watchlist-card">
+        <div class="card-header">
+          <i class="fas fa-star"></i>
+          <h3>Watchlist</h3>
+        </div>
+        <div class="watchlist-items" id="watchlistContainer">
+          <div class="empty-watchlist">
+            <i class="far fa-star" style="font-size: 32px; margin-bottom: 12px; display: block;"></i>
+            No coins in watchlist<br>Click <i class="fas fa-star" style="color: #F0B90B;"></i> on any coin to add
+          </div>
+        </div>
+      </div>
+
+      <!-- Chart Card -->
+      <div class="chart-card">
+        <div class="card-header">
+          <i class="fas fa-chart-line"></i>
+          <h3>Price Chart <span id="chartCoinLabel" style="font-size: 11px; color: #848E9C;">(7 days)</span></h3>
+        </div>
+        <div class="chart-container">
+          <canvas id="priceChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <i class="fas fa-chart-simple"></i> Data provided by CoinGecko | Auto-refresh every 30 seconds | Real-time cryptocurrency tracker
+  </div>
+</div>
+
+<script>
+  // ---------- STATE ----------
+  let allCoins = [];
+  let filteredCoins = [];
+  let currentFilter = 'all';
+  let searchQuery = '';
+  let watchlist = new Set(); // store coin ids
+  let chartInstance = null;
+  
+  // DOM Elements
+  const tableBody = document.getElementById('tableBody');
+  const searchInput = document.getElementById('searchInput');
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const refreshBtn = document.getElementById('refreshBtn');
+  const updateTimestampSpan = document.querySelector('#updateTimestamp span');
+  const totalCoinsSpan = document.getElementById('totalCoins');
+  const globalMCapSpan = document.getElementById('globalMCap');
+  const globalVolumeSpan = document.getElementById('globalVolume');
+  const topGainerSpan = document.getElementById('topGainer');
+  const watchlistContainer = document.getElementById('watchlistContainer');
+  const chartCoinLabel = document.getElementById('chartCoinLabel');
+  
+  // Helper: Format numbers
+  function formatPrice(value) {
+    if (value === undefined || value === null) return '$0.00';
+    if (value < 0.01) return '$' + value.toFixed(6);
+    if (value < 1) return '$' + value.toFixed(4);
+    return '$' + value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  
+  function formatLarge(value) {
+    if (!value) return '$0';
+    if (value >= 1e12) return '$' + (value / 1e12).toFixed(2) + 'T';
+    if (value >= 1e9) return '$' + (value / 1e9).toFixed(2) + 'B';
+    if (value >= 1e6) return '$' + (value / 1e6).toFixed(2) + 'M';
+    if (value >= 1e3) return '$' + (value / 1e3).toFixed(2) + 'K';
+    return '$' + value.toFixed(2);
+  }
+  
+  function updateTimestamp() {
+    const now = new Date();
+    updateTimestampSpan.textContent = now.toLocaleTimeString();
+  }
+  
+  // Fetch global stats
+  async function fetchGlobalStats() {
+    try {
+      const res = await fetch('https://api.coingecko.com/api/v3/global');
+      const data = await res.json();
+      const totalMCap = data.data?.total_market_cap?.usd || 0;
+      const totalVol = data.data?.total_volume?.usd || 0;
+      globalMCapSpan.textContent = formatLarge(totalMCap);
+      globalVolumeSpan.textContent = formatLarge(totalVol);
+    } catch (err) {
+      console.warn('Global stats error:', err);
+    }
+  }
+  
+  // Fetch coins list
+  async function fetchCoins() {
+    const url = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=150&page=1&sparkline=false&price_change_percentage=24h';
+    try {
+      const res = await fetch(url);
+      const data = await res.json();
+      allCoins = data;
+      applyFiltersAndRender();
+      await fetchGlobalStats();
+      updateTimestamp();
+      renderWatchlist();
+      updateTopGainer();
+    } catch (err) {
+      console.error('Fetch error:', err);
+      tableBody.innerHTML = '<tr><td colspan="7" class="loader-state"><i class="fas fa-exclamation-triangle"></i> Failed to load data. Please try again.</td></tr>';
+    }
+  }
+  
+  function updateTopGainer() {
+    if (!allCoins.length) return;
+    let top = allCoins.reduce((a, b) => ((b.price_change_percentage_24h ?? -Infinity) > (a.price_change_percentage_24h ?? -Infinity) ? b : a));
+    let change = top.price_change_percentage_24h?.toFixed(2) || 0;
+    topGainerSpan.innerHTML = `${top.symbol.toUpperCase()} +${change}%`;
+  }
+  
+  // Filter logic
+  function applyFiltersAndRender() {
+    let temp = [...allCoins];
+    if (currentFilter === 'gainers') {
+      temp = temp.filter(c => (c.price_change_percentage_24h ?? 0) > 0);
+    } else if (currentFilter === 'losers') {
+      temp = temp.filter(c => (c.price_change_percentage_24h ?? 0) < 0);
+    }
+    if (searchQuery.trim() !== '') {
+      const q = searchQuery.toLowerCase();
+      temp = temp.filter(c => c.name.toLowerCase().includes(q) || c.symbol.toLowerCase().includes(q));
+    }
+    filteredCoins = temp;
+    renderTable();
+    totalCoinsSpan.textContent = filteredCoins.length;
+  }
+  
+  // Render main table
+  function renderTable() {
+    if (!filteredCoins.length) {
+      tableBody.innerHTML = '<tr><td colspan="7" class="loader-state">No matching cryptocurrencies found.</td></tr>';
+      return;
+    }
+    
+    let html = '';
+    filteredCoins.forEach((coin, idx) => {
+      const change = coin.price_change_percentage_24h ?? 0;
+      const changeClass = change >= 0 ? 'price-positive' : 'price-negative';
+      const changeIcon = change >= 0 ? '▲' : '▼';
+      const isInWatchlist = watchlist.has(coin.id);
+      const iconText = coin.symbol.substring(0, 2).toUpperCase();
+      
+      html += `<tr data-coin-id="${coin.id}">
+        <td class="watchlist-star ${isInWatchlist ? 'active' : ''}" data-id="${coin.id}">
+          <i class="${isInWatchlist ? 'fas fa-star' : 'far fa-star'}"></i>
+        </td>
+        <td>${idx + 1}</td>
+        <td>
+          <div class="coin-cell">
+            <div class="coin-icon">${iconText}</div>
+            <div class="coin-info">
+              <div class="coin-name">${coin.name}</div>
+              <div class="coin-symbol">${coin.symbol.toUpperCase()}</div>
+            </div>
+          </div>
+        </td>
+        <td class="price">${formatPrice(coin.current_price)}</td>
+        <td class="${changeClass}">${changeIcon} ${Math.abs(change).toFixed(2)}%</td>
+        <td>${formatLarge(coin.market_cap)}</td>
+        <td>${formatLarge(coin.total_volume)}</td>
+      </tr>`;
+    });
+    tableBody.innerHTML = html;
+    
+    // Attach star click events
+    document.querySelectorAll('.watchlist-star').forEach(el => {
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const coinId = el.getAttribute('data-id');
+        const coin = allCoins.find(c => c.id === coinId);
+        if (coin) toggleWatchlist(coinId);
+      });
+    });
+    
+    // Attach row click for chart
+    document.querySelectorAll('#cryptoTable tbody tr').forEach(row => {
+      row.addEventListener('click', (e) => {
+        if (e.target.closest('.watchlist-star')) return;
+        const coinId = row.getAttribute('data-coin-id');
+        if (coinId) loadChartForCoin(coinId);
+      });
+    });
+  }
+  
+ // Watchlist functions
+  function toggleWatchlist(coinId) {
+    if (watchlist.has(coinId)) {
+      watchlist.delete(coinId);
+    } else {
+      watchlist.add(coinId);
+    }
+    saveWatchlistToLocal();
+    renderTable(); // refresh star icons
+    renderWatchlist();
+    // If current chart coin is removed, optionally keep chart or clear? we keep but user can click again
+  }
+  
+  function renderWatchlist() {
+    const watchlistCoins = allCoins.filter(c => watchlist.has(c.id));
+    if (watchlistCoins.length === 0) {
+      watchlistContainer.innerHTML = `<div class="empty-watchlist">
+        <i class="far fa-star" style="font-size: 32px; margin-bottom: 12px; display: block;"></i>
+        No coins in watchlist<br>Click <i class="fas fa-star" style="color: #F0B90B;"></i> on any coin to add
+      </div>`;
+      return;
+    }
+    
+    let html = '';
+    watchlistCoins.forEach(coin => {
+      const change = coin.price_change_percentage_24h ?? 0;
+      const changeClass = change >= 0 ? 'price-positive' : 'price-negative';
+      const changeIcon = change >= 0 ? '▲' : '▼';
+      html += `<div class="watchlist-item" data-id="${coin.id}">
+        <div class="watchlist-item-info">
+          <div class="watchlist-item-name">${coin.name}</div>
+          <div class="watchlist-item-symbol">${coin.symbol.toUpperCase()}</div>
+        </div>
+        <div class="watchlist-item-price">
+          <div>${formatPrice(coin.current_price)}</div>
+          <div class="watchlist-item-change ${changeClass}">${changeIcon} ${Math.abs(change).toFixed(2)}%</div>
+        </div>
+      </div>`;
+    });
+    watchlistContainer.innerHTML = html;
+    
+    // Add click to load chart from watchlist
+    document.querySelectorAll('.watchlist-item').forEach(el => {
+      el.addEventListener('click', () => {
+        const coinId = el.getAttribute('data-id');
+        if (coinId) loadChartForCoin(coinId);
+      });
+    });
+  }
+  
+  function saveWatchlistToLocal() {
+    localStorage.setItem('cryptoWatchlist', JSON.stringify([...watchlist]));
+  }
+  
+  function loadWatchlistFromLocal() {
+    const stored = localStorage.getItem('cryptoWatchlist');
+    if (stored) {
+      try {
+        const arr = JSON.parse(stored);
+        watchlist = new Set(arr);
+      } catch(e) {}
+    }
+  }
+  
+  // Chart: fetch 7-day data
+  async function loadChartForCoin(coinId) {
+    const coin = allCoins.find(c => c.id === coinId);
+    if (!coin) return;
+    chartCoinLabel.textContent = `${coin.name} (${coin.symbol.toUpperCase()}) · 7d`;
+    
+    try {
+      const res = await fetch(`https://api.coingecko.com/api/v3/coins/${coinId}/market_chart?vs_currency=usd&days=7&interval=daily`);
+      const data = await res.json();
+      const prices = data.prices || [];
+      const labels = prices.map(p => {
+        const date = new Date(p[0]);
+        return `${date.getMonth()+1}/${date.getDate()}`;
+      });
+      const priceData = prices.map(p => p[1]);
+      
+      const ctx = document.getElementById('priceChart').getContext('2d');
+      if (chartInstance) chartInstance.destroy();
+      chartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Price (USD)',
+            data: priceData,
+            borderColor: '#F0B90B',
+            backgroundColor: 'rgba(240, 185, 11, 0.08)',
+            borderWidth: 2,
+            tension: 0.3,
+            fill: true,
+            pointRadius: 3,
+            pointBackgroundColor: '#F0B90B',
+            pointBorderColor: '#1E2329'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: { labels: { color: '#EAECEF', font: { size: 11 } } },
+            tooltip: { mode: 'index', intersect: false }
+          },
+          scales: {
+            x: { grid: { color: '#2B3139' }, ticks: { color: '#848E9C' } },
+            y: { grid: { color: '#2B3139' }, ticks: { color: '#EAECEF', callback: (val) => formatPrice(val) } }
+          }
+        }
+      });
+    } catch (err) {
+      console.warn('Chart error:', err);
+      chartCoinLabel.textContent = 'Chart unavailable';
+    }
+  }
+  
+  // Event listeners
+  function bindEvents() {
+    searchInput.addEventListener('input', (e) => {
+      searchQuery = e.target.value;
+      applyFiltersAndRender();
+    });
+    
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.getAttribute('data-filter');
+        applyFiltersAndRender();
+      });
+    });
+    
+    refreshBtn.addEventListener('click', async () => {
+      refreshBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Updating';
+      await fetchCoins();
+      refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh';
+    });
+  }
+  
+  // Auto refresh every 30 seconds
+  let autoInterval;
+  function startAutoRefresh() {
+    if (autoInterval) clearInterval(autoInterval);
+    autoInterval = setInterval(() => {
+      fetchCoins();
+    }, 30000);
+  }
+  
+  // Init
+  async function init() {
+    bindEvents();
+    loadWatchlistFromLocal();
+    await fetchCoins();
+    startAutoRefresh();
+    // auto-save watchlist on changes (periodic)
+    setInterval(() => saveWatchlistToLocal(), 2000);
+  }
+  
+  init();
+</script>
+</body>
+</html>
+```
