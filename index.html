@@ -256,6 +256,9 @@ body {
     border-radius: 20px;
     border: 1px solid #2B3139;
     overflow: hidden;
+    max-height: 560px;
+    display: flex;
+    flex-direction: column;
 }
 
 .table-header {
@@ -306,7 +309,33 @@ body {
 .crypto-table tr:hover {
     background: #2B3139;
 }
+/* Table ko scrollable banayen */
+.table-wrapper .crypto-table {
+    display: block;
+    overflow-y: auto;
+    max-height: 450px;
+    width: 100%;
+}
 
+.crypto-table thead {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: table;
+    width: 100%;
+}
+
+.crypto-table tbody {
+    display: table;
+    width: 100%;
+}
+
+.crypto-table th {
+    background: #15191F;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
 .coin-cell {
     display: flex;
     align-items: center;
