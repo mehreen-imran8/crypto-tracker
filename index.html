@@ -256,7 +256,7 @@ body {
     border-radius: 20px;
     border: 1px solid #2B3139;
     overflow: hidden;
-    max-height: 480px;
+    max-height: 550px;
     display: flex;
     flex-direction: column;
 }
@@ -267,6 +267,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+  flex-shrink: 0;
 }
 
 .table-header h3 {
@@ -312,8 +313,8 @@ body {
 /* Table ko scrollable banayen */
 .table-wrapper .crypto-table {
     display: block;
-    overflow-y: auto;
-    max-height: 550px;
+    overflow-y: scroll;
+  flex: 1;
     width: 100%;
 }
 
